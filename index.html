@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATIHAN MATEMATIK JANA AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0fdf4;
+        }
+
+        .correct-ans { border-color: #22c55e !important; background-color: #dcfce7 !important; }
+        .wrong-ans { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
+        
+        /* Penggayaan Gambarajah Bentuk Lazim */
+        .bentuk-lazim-container {
+            display: inline-block;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.25rem;
+            text-align: right;
+            line-height: 1.2;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            min-width: 100px;
+        }
+        .bentuk-lazim-bottom {
+            border-bottom: 2px solid #000;
+            padding-bottom: 2px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Antaramuka Utama -->
+    <div class="max-w-5xl mx-auto my-8 p-6 bg-white rounded-2xl shadow-xl">
+        
+        <!-- Header Aplikasi -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-green-700 mb-2">
+                <i class="fas fa-robot mr-2"></i>LATIHAN MATEMATIK JANA AI
+            </h1>
+            <p class="text-sm text-gray-600 font-medium">Berdasarkan DSKP Matematik Tahun 1 - 6 (KSSR Semakan 2017) KPM</p>
+        </div>
+
+        <!-- Panel Kawalan -->
+        <div class="bg-green-50 p-6 rounded-xl border border-green-200 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tahun / Darjah</label>
+                    <select id="tahun" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-500 outline-none" onchange="updateTopics()">
+                        <option value="1">Tahun 1</option>
+                        <option value="2">Tahun 2</option>
+                        <option value="3">Tahun 3</option>
+                        <option value="4">Tahun 4</option>
+                        <option value="5">Tahun 5</option>
+                        <option value="6">Tahun 6</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Unit / Topik</label>
+                    <select id="topik" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-500 outline-none">
+                        <!-- Akan diisi oleh JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Set Soalan</label>
+                    <select id="set" class="w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-green-500 outline-none">
+                        <option value="1">Set 1</option>
+                        <option value="2">Set 2</option>
+                        <option value="3">Set 3</option>
+                        <option value="4">Set 4</option>
+                        <option value="5">Set 5</option>
+                        <option value="6">Set 6</option>
+                        <option value="7">Set 7</option>
+                        <option value="8">Set 8</option>
+                        <option value="9">Set 9</option>
+                        <option value="10">Set 10</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-4 justify-center">
+                <button onclick="generateLatihan()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md">
+                    <i class="fas fa-magic mr-2"></i> Jana 30 Soalan
+                </button>
+                <button onclick="bukaDanEditCetak()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition shadow-md">
+                    <i class="fas fa-print mr-2"></i> Pratonton & Cetak Latihan
+                </button>
+            </div>
+        </div>
+
+        <!-- Kawasan Soalan -->
+        <div id="latihan-container" class="hidden">
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2 md:mb-0" id="tajuk-latihan">Set Latihan</h2>
+                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded border border-yellow-300 shadow-sm">Mengandungi 30 Soalan Pelbagai Aras</span>
+            </div>
+
+            <div id="soalan-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Soalan akan diisi di sini oleh JS -->
+            </div>
+
+            <!-- Keputusan & Butang Semak -->
+            <div class="mt-10 text-center">
+                <button id="btn-semak" onclick="semakJawapan()" class="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg transition shadow-lg w-full md:w-auto">
+                    <i class="fas fa-check-circle mr-2"></i> Semak Jawapan
+                </button>
+                
+                <div id="keputusan-box" class="hidden mt-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl max-w-md mx-auto">
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">Keputusan Anda</h3>
+                    <p class="text-4xl font-black text-gray-800" id="skor-teks">0 / 30</p>
+                    <p class="text-2xl font-bold text-green-600 mt-2" id="peratus-teks">0%</p>
+                    <p class="text-sm text-gray-600 mt-3">Kiraan: (Markah / 30) × 100</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- State Kosong -->
+        <div id="empty-state" class="text-center py-16">
+            <i class="fas fa-book-open text-6xl text-green-200 mb-4"></i>
+            <p class="text-gray-500 text-lg">Sila pilih Tahun, Topik dan Set, kemudian klik "Jana Soalan" untuk memulakan.</p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-sm text-gray-500 mt-auto">
+        Powered By <strong>Ts. AKBAR</strong> @2026 Hak Cipta Terpelihara.
+    </footer>
+
+    <!-- Logik Aplikasi (JavaScript) -->
+    <script>
+        // Data Topik Mengikut DSKP Semakan 2017 Terperinci
+        const dskpTopics = {
+            1: [
+                "Jilid 1 - Unit 1: Nombor hingga 100", 
+                "Jilid 1 - Unit 2: Tambah dan Tolak", 
+                "Jilid 1 - Unit 3: Pecahan", 
+                "Jilid 2 - Unit 4: Wang hingga RM10", 
+                "Jilid 2 - Unit 5: Masa dan Waktu",
+                "Jilid 2 - Unit 6: Panjang, Jisim dan Isi Padu Cecair",
+                "Jilid 2 - Unit 7: Bentuk Dua dan Tiga Dimensi"
+            ],
+            2: [
+                "Jilid 1 - Unit 1: Nombor hingga 1,000", 
+                "Jilid 1 - Unit 2: Tambah, Tolak, Darab dan Bahagi", 
+                "Jilid 1 - Unit 3: Pecahan dan Perpuluhan", 
+                "Jilid 2 - Unit 4: Wang hingga RM100", 
+                "Jilid 2 - Unit 5: Masa dan Waktu", 
+                "Jilid 2 - Unit 6: Panjang, Jisim dan Isi Padu", 
+                "Jilid 2 - Unit 7: Bentuk",
+                "Jilid 2 - Unit 8: Pengurusan Data"
+            ],
+            3: [
+                "Jilid 1 - Unit 1: Nombor hingga 10,000", 
+                "Jilid 1 - Unit 2: Tambah, Tolak, Darab dan Bahagi", 
+                "Jilid 1 - Unit 3: Pecahan, Perpuluhan dan Peratus", 
+                "Jilid 2 - Unit 4: Wang hingga RM1,000", 
+                "Jilid 2 - Unit 5: Masa dan Waktu", 
+                "Jilid 2 - Unit 6: Panjang, Jisim dan Isi Padu",
+                "Jilid 2 - Unit 7: Bentuk",
+                "Jilid 2 - Unit 8: Kedudukan",
+                "Jilid 2 - Unit 9: Data"
+            ],
+            4: [
+                "Unit 1: Nombor dan Operasi (hingga 100,000)", 
+                "Unit 2: Pecahan, Perpuluhan dan Peratus", 
+                "Unit 3: Wang hingga RM100,000", 
+                "Unit 4: Masa dan Waktu", 
+                "Unit 5: Panjang, Jisim dan Isi Padu Cecair", 
+                "Unit 6: Ruang", 
+                "Unit 7: Koordinat, Nisbah dan Kadaran",
+                "Unit 8: Pengurusan Data"
+            ],
+            5: [
+                "Unit 1: Nombor Bulat dan Operasi (hingga 1,000,000)", 
+                "Unit 2: Pecahan, Perpuluhan dan Peratus", 
+                "Unit 3: Wang (Faedah & Cukai)", 
+                "Unit 4: Masa dan Waktu", 
+                "Unit 5: Panjang, Jisim dan Isi Padu Cecair", 
+                "Unit 6: Ruang", 
+                "Unit 7: Koordinat, Nisbah dan Kadaran",
+                "Unit 8: Pengurusan Data"
+            ],
+            6: [
+                "Unit 1: Nombor Bulat dan Operasi (hingga 10,000,000)", 
+                "Unit 2: Pecahan, Perpuluhan dan Peratus", 
+                "Unit 3: Wang (Insurans & Takaful)", 
+                "Unit 4: Masa dan Waktu", 
+                "Unit 5: Ukuran dan Sukatan", 
+                "Unit 6: Ruang", 
+                "Unit 7: Koordinat, Nisbah dan Kadaran",
+                "Unit 8: Pengurusan Data dan Kebolehjadian"
+            ]
+        };
+
+        const rangeByYear = { 1: 100, 2: 1000, 3: 10000, 4: 100000, 5: 1000000, 6: 10000000 };
+        let currentQuestions = [];
+
+        window.onload = () => { updateTopics(); };
+
+        function updateTopics() {
+            const tahun = document.getElementById('tahun').value;
+            const topikSelect = document.getElementById('topik');
+            topikSelect.innerHTML = '';
+            
+            dskpTopics[tahun].forEach((topik, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = topik;
+                topikSelect.appendChild(option);
+            });
+        }
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // --- ENJIN BENTUK LAZIM ---
+        function generateBentukLazim(num1, num2, operator) {
+            return `
+                <div class="bentuk-lazim-container">
+                    <div>&nbsp;&nbsp;${num1}</div>
+                    <div class="bentuk-lazim-bottom">${operator} ${num2}</div>
+                    <div style="color: transparent;">__</div>
+                </div>
+            `;
+        }
+
+        // --- ENJIN PECAHAN TAHAP 1 (GAMBARAJAH & BENTUK LAZIM) ---
+        function generateBentukPecahan(n, d) {
+            return `
+                <div style="display: inline-block; text-align: center; vertical-align: middle; margin: 0 5px; font-size: 1.2rem; font-weight: bold;">
+                    <div style="border-bottom: 2px solid #000; padding: 0 5px;">${n}</div>
+                    <div style="padding: 0 5px;">${d}</div>
+                </div>
+            `;
+        }
+
+        function generateGambarajahPecahan(n, d) {
+            let cells = '';
+            for(let i=0; i<d; i++) {
+                let bg = i < n ? '#93c5fd' : '#ffffff'; // Warna biru untuk lorekan
+                cells += `<div style="flex: 1; background-color: ${bg}; border: 1px solid #475569; -webkit-print-color-adjust: exact; print-color-adjust: exact;"></div>`;
+            }
+            return `
+                <div style="display: flex; width: ${d * 30}px; height: 30px; margin: 10px 0; border: 2px solid #1e293b; border-radius: 4px; overflow: hidden; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    ${cells}
+                </div>
+            `;
+        }
+
+        // --- ENJIN PENJANA SOALAN SPESIFIK UNIT & TAHUN ---
+        function genNombor(tahun, diff, i) {
+            let max = rangeByYear[tahun] * (diff * 0.33);
+            if (max < 10) max = 10;
+            let num = getRandomInt(10, Math.floor(max));
+            
+            let types = ["bundar", "digit", "selepas"];
+            let t = types[i % types.length]; // 10/10/10 teragih sama rata
+
+            if (t === "bundar" && tahun > 1) {
+                return { soalan: `Bundarkan ${num} kepada puluh yang terdekat.`, jawapan: (Math.round(num / 10) * 10).toString() };
+            } else if (t === "digit") {
+                let strNum = num.toString();
+                let digit = strNum.charAt(0);
+                let zeros = strNum.length - 1;
+                return { soalan: `Apakah nilai digit bagi ${digit} dalam nombor ${num}?`, jawapan: (parseInt(digit) * Math.pow(10, zeros)).toString() };
+            } else {
+                return { soalan: `Apakah nombor selepas ${num}?`, jawapan: (num + 1).toString() };
+            }
+        }
+
+        function genOperasi(tahun, diff, i) {
+            let max = rangeByYear[tahun] * (diff * 0.2);
+            if (max < 10) max = 20;
+            
+            let ops = ['+', '-'];
+            if (tahun >= 2) ops.push('×', '÷');
+            
+            let op = ops[i % ops.length]; // Sama rata
+            
+            let num1, num2, ans, qText;
+
+            if (op === '-' || op === '+') {
+                num1 = getRandomInt(10, Math.floor(max));
+                num2 = getRandomInt(1, op === '-' ? num1 : Math.floor(max));
+                ans = op === '+' ? num1 + num2 : num1 - num2;
+                
+                if (Math.random() > 0.3) {
+                    qText = `Selesaikan bentuk lazim di bawah:<br>` + generateBentukLazim(num1, num2, op);
+                } else {
+                    qText = `${num1} ${op} ${num2} = ?`;
+                }
+            } else if (op === '×') {
+                let mulMax = tahun * 10 * diff;
+                num1 = getRandomInt(2, mulMax);
+                num2 = getRandomInt(2, mulMax > 12 ? 12 : mulMax);
+                ans = num1 * num2;
+                qText = `${num1} × ${num2} = ?`;
+            } else { // Bahagi
+                let divMax = tahun * 5 * diff;
+                ans = getRandomInt(2, divMax);
+                num2 = getRandomInt(2, 12);
+                num1 = ans * num2;
+                qText = `${num1} ÷ ${num2} = ?`;
+            }
+
+            return { soalan: qText, jawapan: ans.toString() };
+        }
+
+        function genPecahan(tahun, diff, i) {
+            let type = 0; // 0: Pecahan, 1: Perpuluhan, 2: Peratus
+            
+            if (tahun === 2) type = i % 2; // (JAMINAN PECAHAN 15 & PERPULUHAN 15)
+            else if (tahun >= 3) type = i % 3; // (JAMINAN PECAHAN 10, PERPULUHAN 10 & PERATUS 10)
+
+            if (type === 0 || tahun === 1) { // PECAHAN
+                const denominators = (tahun === 1) ? [2, 4] : [2, 3, 4, 5, 8, 10];
+                let d = denominators[getRandomInt(0, denominators.length - 1)];
+                let n1 = getRandomInt(1, d - 1);
+
+                // Guna Math.random() di sini elak konflik dengan i % n di atas
+                if (tahun === 1 || (tahun <= 3 && Math.random() > 0.5)) {
+                    // Gambarajah Kawasan Berlorek
+                    let qText = `Apakah pecahan bagi kawasan berlorek?<br>` + generateGambarajahPecahan(n1, d);
+                    let ans = `${n1}/${d}`;
+                    
+                    if (tahun === 1 && Math.random() > 0.5) {
+                        let name = n1 === 1 && d === 2 ? "setengah" : (n1 === 1 && d === 4 ? "suku" : (n1 === 3 && d === 4 ? "tiga perempat" : `${n1} per ${d}`));
+                        qText = `Nyatakan pecahan ini dalam angka: <strong>${name}</strong> (cth: 1/2)`;
+                        ans = `${n1}/${d}`;
+                    }
+                    return { soalan: qText, jawapan: ans };
+                } 
+                else {
+                    // Operasi Pecahan dengan Bentuk Lazim Pecahan
+                    let n2 = getRandomInt(1, d - n1 > 0 ? d - n1 : 1); 
+                    let op = ['+', '-'][getRandomInt(0, 1)];
+                    
+                    let ansNum = op === '+' ? n1 + n2 : Math.abs(n1 - n2);
+                    if (ansNum === 0) { ansNum = 1; n1++; }
+                    
+                    let n1F = op === '-' && n1 < n2 ? n2 : n1;
+                    let n2F = op === '-' && n1 < n2 ? n1 : n2;
+                    
+                    let qText = `Selesaikan:<br>
+                        <div style="display:flex; align-items: center; gap: 5px; margin-top:10px;">
+                            ${generateBentukPecahan(n1F, d)} 
+                            <span style="font-size:1.5rem; font-weight:bold;">${op}</span> 
+                            ${generateBentukPecahan(n2F, d)} 
+                            <span style="font-size:1.5rem; font-weight:bold;">=</span>
+                            ?
+                        </div>`;
+                    return { soalan: qText, jawapan: `${ansNum}/${d}` };
+                }
+            } else if (type === 1) { // PERPULUHAN
+                if (tahun === 2) {
+                    // Soalan Perpuluhan Tahun 2 Dipelbagaikan Supaya Tidak Keliru Dengan Pecahan
+                    let subType = getRandomInt(1, 3);
+                    if (subType === 1) {
+                        let num = getRandomInt(1, 9);
+                        return { soalan: `Tukarkan pecahan <strong>${num}/10</strong> kepada nombor perpuluhan.`, jawapan: `0.${num}` };
+                    } else if (subType === 2) {
+                        let n1 = getRandomInt(1, 4);
+                        let n2 = getRandomInt(6, 9);
+                        return { soalan: `Antara <strong>0.${n1}</strong> dan <strong>0.${n2}</strong>, nombor perpuluhan manakah yang lebih besar?`, jawapan: `0.${n2}` };
+                    } else {
+                        let num = getRandomInt(1, 9);
+                        let ejaan = ["satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan"][num - 1];
+                        return { soalan: `Tuliskan "<strong>sifar perpuluhan ${ejaan}</strong>" dalam bentuk angka.`, jawapan: `0.${num}` };
+                    }
+                } else {
+                    let max = diff * 10;
+                    let num1 = parseFloat((Math.random() * max).toFixed(2));
+                    let num2 = parseFloat((Math.random() * max).toFixed(2));
+                    let op = ['+', '-'][getRandomInt(0, 1)];
+                    if (op === '-' && num1 < num2) { let t = num1; num1 = num2; num2 = t; }
+                    let ans = op === '+' ? (num1 + num2).toFixed(2) : (num1 - num2).toFixed(2);
+                    
+                    let qText = Math.random() > 0.5 
+                        ? `Kira:<br>` + generateBentukLazim(num1.toFixed(2), num2.toFixed(2), op)
+                        : `${num1.toFixed(2)} ${op} ${num2.toFixed(2)} = ?`;
+
+                    return { soalan: qText, jawapan: ans.toString() };
+                }
+            } else { // PERATUS
+                if (tahun === 3) {
+                    let val = getRandomInt(1, 9) * 10;
+                    return { soalan: `Tuliskan pecahan ${val}/100 dalam bentuk peratus.`, jawapan: `${val}%` };
+                } else {
+                    let percent = getRandomInt(1, 9) * 10;
+                    let base = getRandomInt(2, 10 * diff) * 10;
+                    let ans = (percent / 100) * base;
+                    return { soalan: `Berapakah ${percent}% daripada ${base}? (Nombor sahaja)`, jawapan: ans.toString() };
+                }
+            }
+        }
+
+        function genWang(tahun, diff, i) {
+            let max = (rangeByYear[tahun] / 10) * (diff * 0.5);
+            if (max < 10) max = 10;
+            if (tahun === 1) max = 10;
+
+            let num1 = parseFloat((Math.random() * max).toFixed(2));
+            let num2 = parseFloat((Math.random() * (max/2)).toFixed(2));
+            
+            let ops = ['+', '-'];
+            if (tahun >= 3) ops.push('×', '÷'); // Tambah Operasi Bahagi (Sama Rata 4 Jenis)
+            let op = ops[i % ops.length];
+            
+            if (op === '-' && num1 < num2) { let t = num1; num1 = num2; num2 = t; }
+            
+            let ans, qText;
+            if (op === '×') {
+                let multiplier = getRandomInt(2, 10);
+                ans = (num1 * multiplier).toFixed(2);
+                qText = `RM ${num1.toFixed(2)} × ${multiplier} = ?`;
+            } else if (op === '÷') {
+                let divider = getRandomInt(2, 5);
+                let total = (num1 * divider).toFixed(2);
+                ans = num1.toFixed(2);
+                qText = `RM ${total} ÷ ${divider} = ?`;
+            } else {
+                ans = op === '+' ? (num1 + num2).toFixed(2) : (num1 - num2).toFixed(2);
+                qText = Math.random() > 0.4 && tahun > 1
+                    ? `Selesaikan:<br>` + generateBentukLazim(`RM ${num1.toFixed(2)}`, `RM ${num2.toFixed(2)}`, op)
+                    : `RM ${num1.toFixed(2)} ${op} RM ${num2.toFixed(2)} = ?`;
+            }
+
+            return { soalan: qText, jawapan: ans.toString() };
+        }
+
+        function genMasa(tahun, diff, i) {
+            if (tahun <= 2) {
+                let masaSet = [
+                    { q: "Hari selepas Isnin ialah...", a: "selasa" },
+                    { q: "Hari sebelum Ahad ialah...", a: "sabtu" },
+                    { q: "Bulan pertama dalam setahun ialah...", a: "januari" },
+                    { q: "Sehari ada berapa jam?", a: "24" },
+                    { q: "Pukul berapakah jarum panjang di 12 dan jarum pendek di 3?", a: "3" },
+                    { q: "Satu jam bersamaan berapa minit?", a: "60" }
+                ];
+                let m = masaSet[i % masaSet.length]; // Jaminan Sama Rata
+                return { soalan: m.q, jawapan: m.a };
+            } else {
+                let units = ["jam", "hari", "tahun", "minggu"];
+                let unit = units[i % units.length]; // Jaminan Sama Rata 4 Jenis
+                let val1 = getRandomInt(1, 10 * diff);
+                let val2 = getRandomInt(1, 5 * diff);
+                let op = ['+', '-'][getRandomInt(0, 1)];
+                if (op === '-' && val1 < val2) { let t = val1; val1 = val2; val2 = t; }
+                let ans = op === '+' ? val1 + val2 : val1 - val2;
+                return { soalan: `${val1} ${unit} ${op} ${val2} ${unit} = ? (Nombor sahaja)`, jawapan: ans.toString() };
+            }
+        }
+
+        function genUkuran(tahun, diff, i) {
+            let cat = i % 3; // 0: Panjang, 1: Jisim, 2: Isipadu (Jaminan Sama Rata 10/10/10)
+            let units;
+            if (tahun === 1) {
+                units = cat === 0 ? ["jengkal", "langkah"] : (cat === 1 ? ["guli", "buku"] : ["cawan", "sudu"]);
+            } else {
+                units = cat === 0 ? ["cm", "m", "km"] : (cat === 1 ? ["g", "kg"] : ["ml", "liter"]);
+            }
+            let unit = units[getRandomInt(0, units.length - 1)];
+            
+            let val1 = getRandomInt(10, 100 * diff);
+            let val2 = getRandomInt(5, 50 * diff);
+            let op = ['+', '-'][getRandomInt(0, 1)];
+            if (op === '-' && val1 < val2) { let t = val1; val1 = val2; val2 = t; }
+            let ans = op === '+' ? val1 + val2 : val1 - val2;
+            
+            let qText = Math.random() > 0.5 && tahun > 1 
+                ? `Kira:<br>` + generateBentukLazim(`${val1} ${unit}`, `${val2} ${unit}`, op)
+                : `${val1} ${unit} ${op} ${val2} ${unit} = ? (Nombor sahaja)`;
+
+            return { soalan: qText, jawapan: ans.toString() };
+        }
+
+        function genRuang(tahun, diff, i) {
+            if (tahun <= 3) {
+                let bentukSet = [
+                    { q: "Segi empat sama ada berapa bucu?", a: "4" },
+                    { q: "Bentuk 2D yang tiada bucu langsung ialah...", a: "bulatan" },
+                    { q: "Segi tiga mempunyai berapa sisi lurus?", a: "3" },
+                    { q: "Namakan bentuk 3D yang berbentuk seperti bola.", a: "sfera" },
+                    { q: "Kubus mempunyai berapa permukaan rata yang sama besar?", a: "6" }
+                ];
+                let b = bentukSet[i % bentukSet.length]; // Jaminan sama rata
+                return { soalan: b.q, jawapan: b.a };
+            } else {
+                let jenis = ["Segi empat sama", "Segi empat tepat", "Segi Tiga"][i % 3]; // Jaminan 10/10/10
+                let sisi = getRandomInt(3, 10 * diff);
+                if (jenis === "Segi empat sama") {
+                    return { soalan: `Kira perimeter bagi Segi Empat Sama yang mempunyai sisi panjang ${sisi} cm. (Nombor sahaja)`, jawapan: (sisi * 4).toString() };
+                } else if (jenis === "Segi empat tepat") {
+                    let lebar = getRandomInt(2, sisi > 2 ? sisi - 1 : 2);
+                    return { soalan: `Luas bagi Segi Empat Tepat dengan panjang ${sisi}cm dan lebar ${lebar}cm ialah berapa cm persegi?`, jawapan: (sisi * lebar).toString() };
+                } else {
+                    return { soalan: `Kira perimeter sebuah Segi Tiga Sama Sisi yang setiap sisinya berukuran ${sisi} cm. (Nombor sahaja)`, jawapan: (sisi * 3).toString() };
+                }
+            }
+        }
+
+        function genData(tahun, diff, i) {
+            let itemSet = ["Gula-gula", "Buku", "Pensel", "Guli", "Epal", "Kotak"];
+            let item = itemSet[i % itemSet.length]; // Sama rata
+            let val1 = getRandomInt(10, 50);
+            let val2 = getRandomInt(2, 5);
+            return { soalan: `Dalam satu piktograf, jika 1 simbol mewakili ${val1} ${item}, berapakah jumlah untuk ${val2} simbol? (Nombor sahaja)`, jawapan: (val1 * val2).toString() };
+        }
+
+        // --- PENGURUS UTAMA (ROUTER) ---
+        function generateMathLogic(tahun, unitIndex, difficulty, indexSoalan) {
+            tahun = parseInt(tahun); // Mengelakkan isu format string ke integer
+            let topicStr = dskpTopics[tahun][unitIndex].toLowerCase();
+            
+            if (topicStr.includes("nombor")) return genNombor(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("tambah") || topicStr.includes("tolak") || topicStr.includes("operasi") || topicStr.includes("darab") || topicStr.includes("bahagi")) return genOperasi(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("pecahan") || topicStr.includes("perpuluhan")) return genPecahan(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("wang")) return genWang(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("masa") || topicStr.includes("waktu")) return genMasa(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("panjang") || topicStr.includes("jisim") || topicStr.includes("isi padu") || topicStr.includes("ukuran")) return genUkuran(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("bentuk") || topicStr.includes("ruang")) return genRuang(tahun, difficulty, indexSoalan);
+            if (topicStr.includes("data") || topicStr.includes("koordinat") || topicStr.includes("kedudukan")) return genData(tahun, difficulty, indexSoalan);
+            
+            return genOperasi(tahun, difficulty, indexSoalan);
+        }
+
+        // --- UI INTERACTION ---
+        function generateLatihan() {
+            const tahun = document.getElementById('tahun').value;
+            const topik = document.getElementById('topik');
+            const unitText = topik.options[topik.selectedIndex].text;
+            const unitIndex = topik.value;
+            const setNum = document.getElementById('set').value;
+
+            document.getElementById('tajuk-latihan').textContent = `Tahun ${tahun} - ${unitText.split(':')[1] || unitText} (Set ${setNum})`;
+            
+            currentQuestions = [];
+            const container = document.getElementById('soalan-list');
+            container.innerHTML = '';
+
+            for(let i = 1; i <= 30; i++) {
+                let difficulty = i <= 10 ? 1 : (i <= 20 ? 2 : 3);
+                let arasLabel = difficulty === 1 ? "Aras Rendah" : (difficulty === 2 ? "Aras Sederhana" : "Aras Tinggi");
+                let badgeColor = difficulty === 1 ? "bg-green-100 text-green-800" : (difficulty === 2 ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800");
+
+                // Hantar 'i' (Indeks Soalan) ke dalam enjin utama
+                const qData = generateMathLogic(tahun, unitIndex, difficulty, i);
+                currentQuestions.push({
+                    id: i,
+                    soalan: qData.soalan,
+                    jawapanSebenar: qData.jawapan,
+                    aras: arasLabel
+                });
+
+                const html = `
+                    <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative group hover:shadow-md transition">
+                        <div class="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded ${badgeColor} uppercase tracking-wider">
+                            ${arasLabel}
+                        </div>
+                        <div class="flex items-start mb-4 mt-2">
+                            <span class="w-8 h-8 rounded-full bg-green-600 text-white flex-shrink-0 flex items-center justify-center font-bold mr-3 shadow-sm">${i}</span>
+                            <span class="text-lg font-medium text-gray-800 leading-snug w-full" style="min-height: 40px;">${qData.soalan}</span>
+                        </div>
+                        <div class="ml-11">
+                            <input type="text" id="ans-${i}" placeholder="Taip jawapan..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition" autocomplete="off">
+                            <p id="feedback-${i}" class="text-sm font-semibold mt-2 hidden"></p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            }
+
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('latihan-container').classList.remove('hidden');
+            document.getElementById('keputusan-box').classList.add('hidden');
+            document.getElementById('btn-semak').classList.remove('hidden');
+        }
+
+        function semakJawapan() {
+            let skor = 0;
+            const total = 30;
+
+            currentQuestions.forEach(q => {
+                const inputEl = document.getElementById(`ans-${q.id}`);
+                const feedbackEl = document.getElementById(`feedback-${q.id}`);
+                let userAns = inputEl.value.trim().toLowerCase();
+                let correctAns = q.jawapanSebenar.toString().toLowerCase();
+
+                inputEl.classList.remove('correct-ans', 'wrong-ans');
+                feedbackEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
+
+                if(userAns === correctAns || parseFloat(userAns) === parseFloat(correctAns)) {
+                    skor++;
+                    inputEl.classList.add('correct-ans');
+                    feedbackEl.textContent = "✔ Tepat!";
+                    feedbackEl.classList.add('text-green-600');
+                } else {
+                    inputEl.classList.add('wrong-ans');
+                    feedbackEl.innerHTML = `✘ Salah. Jawapan: <strong>${q.jawapanSebenar}</strong>`;
+                    feedbackEl.classList.add('text-red-600');
+                }
+            });
+
+            const peratus = ((skor / total) * 100).toFixed(0);
+
+            document.getElementById('btn-semak').classList.add('hidden');
+            document.getElementById('keputusan-box').classList.remove('hidden');
+            
+            document.getElementById('skor-teks').textContent = `${skor} / ${total}`;
+            document.getElementById('peratus-teks').textContent = `${peratus}%`;
+
+            document.getElementById('keputusan-box').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function bukaDanEditCetak() {
+            if (currentQuestions.length === 0) {
+                alert("Sila jana soalan terlebih dahulu sebelum membuat pratonton cetakan.");
+                return;
+            }
+
+            const tahun = document.getElementById('tahun').value;
+            const topik = document.getElementById('topik');
+            const unitText = topik.options[topik.selectedIndex].text;
+            const setNum = document.getElementById('set').value;
+
+            // Pastikan gaya CSS Bentuk Lazim dibawa sekali ke dalam halaman cetak
+            const cssBentukLazim = `
+                .bentuk-lazim-container {
+                    display: inline-block;
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 1.25rem;
+                    text-align: right;
+                    line-height: 1.2;
+                    margin-top: 5px;
+                    padding: 10px 15px;
+                    border: 1px solid #ccc;
+                    border-radius: 8px;
+                    background: #fafafa;
+                }
+                .bentuk-lazim-bottom {
+                    border-bottom: 2px solid #000;
+                    padding-bottom: 2px;
+                    margin-bottom: 5px;
+                }
+            `;
+
+            let soalanHTML = `
+                <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background: white; color: black;">
+                    <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid black; padding-bottom: 10px;">
+                        <h2 style="margin: 0; font-size: 24px;">LATIHAN MATEMATIK KSSR</h2>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 14px;">
+                        <div>
+                            <p style="margin:5px 0;"><strong>Nama:</strong> _______________________</p>
+                            <p style="margin:5px 0;"><strong>Kelas:</strong> _______________________</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="margin:5px 0;"><strong>Topik:</strong> Tahun ${tahun} - ${unitText.split(':')[1] || unitText} (Set ${setNum})</p>
+                            <p style="margin:5px 0;"><strong>Markah:</strong> _______ / 100%</p>
+                        </div>
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse;">
+            `;
+
+            for (let i = 0; i < currentQuestions.length; i++) {
+                soalanHTML += `
+                    <tr>
+                        <td style="padding: 15px 10px; width: 5%; vertical-align: top; font-weight: bold; font-size: 16px;">${i + 1}.</td>
+                        <td style="padding: 15px 10px; width: 45%; vertical-align: top; font-size: 16px;">${currentQuestions[i].soalan}</td>
+                        <td style="padding: 15px 10px; width: 50%; border-bottom: 1px dashed #ccc;"></td>
+                    </tr>
+                `;
+            }
+
+            soalanHTML += `
+                    </table>
+                </div>
+            `;
+
+            var win = window.open('', '_blank', 'height=800,width=1000');
+            
+            win.document.write('<!DOCTYPE html><html><head><title>Pratonton Latihan & Cetak</title>');
+            win.document.write('<style>');
+            win.document.write('body { background: #e2e8f0; font-family: sans-serif; margin: 0; padding: 20px; }');
+            win.document.write('.toolbar { text-align: center; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; position: sticky; top: 0; z-index: 100; }');
+            win.document.write('.edit-box { background: white; box-shadow: 0 10px 15px rgba(0,0,0,0.1); border-radius: 4px; padding: 20px; min-height: 1000px; border: 1px dashed #94a3b8; outline: none;}');
+            win.document.write('@media print { body { background: white; padding: 0; } .toolbar, h3 { display: none !important; } .edit-box { border: none !important; box-shadow: none !important; padding: 0 !important; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }');
+            win.document.write(cssBentukLazim); // Inject CSS Bentuk Lazim ke dalam print preview
+            win.document.write('</style>');
+            win.document.write('</head><body>');
+            
+            win.document.write('<div class="toolbar">');
+            win.document.write('<h3 style="margin-top:0; color:#334155;">Sila edit teks di bawah jika perlu sebelum mencetak:</h3>');
+            win.document.write('<button onclick="window.print()" style="padding:12px 24px; background:#2563eb; color:white; border:none; cursor:pointer; font-size: 16px; font-weight: bold; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">🖨️ Cetak Sekarang</button>');
+            win.document.write('</div>');
+            
+            win.document.write('<div id="editor" contenteditable="true" class="edit-box">');
+            win.document.write(soalanHTML);
+            win.document.write('</div>');
+            
+            win.document.write('</body></html>');
+            win.document.close();
+        }
+    </script>
+</body>
+</html>
